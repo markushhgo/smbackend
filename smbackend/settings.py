@@ -65,8 +65,10 @@ env = environ.Env(
     YIT_TOKEN_URL=(str, None),
     KUNTEC_KEY=(str, None),
     EMAIL_BACKEND=(str, None),
+    EMAIL_FROM=(str, None),
     EMAIL_HOST=(str, None),
     EMAIL_HOST_USER=(str, None),
+    EMAIL_HOST_PASSWORD=(str, None),
     EMAIL_PORT=(int, None),
     EMAIL_USE_TLS=(bool, None),
     TELRAAM_TOKEN=(str, None),
@@ -251,8 +253,10 @@ SHORTCUTTER_UNIT_URL = env("SHORTCUTTER_UNIT_URL")
 
 
 EMAIL_BACKEND = env("EMAIL_BACKEND")
+EMAIL_FROM = env("EMAIL_FROM")
 EMAIL_HOST = env("EMAIL_HOST")
 EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 EMAIL_PORT = env("EMAIL_PORT")
 EMAIL_USE_TLS = env("EMAIL_USE_TLS")
 

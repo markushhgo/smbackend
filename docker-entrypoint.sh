@@ -1,5 +1,12 @@
 #!/bin/bash
 set -e
+
+# Enable SSH and give it access to app setting env variables
+if [[ "$ENABLE_SSH" = "true" ]]; then
+    service ssh start
+    eval $(printenv | sed -n "s/^\([^=]\+\)=\(.*\)$/export \1=\2/p" | sed 's/"/\\\"/g' | sed '/=/s//="/' | sed 's/$/"/' >> /etc/profile)
+fi
+
 if [[ "$APPLY_MIGRATIONS" = "true" ]]; then
     echo "Applying database migrations..."
     ./manage.py migrate --noinput
@@ -31,11 +38,12 @@ elif [ "$1" ]; then
     echo "Running command: $1"
     $1
 else
-    exec uwsgi --plugin http,python3 --master --http :8000 \
+    su -s /bin/bash nobody --command "exec uwsgi --plugin http,python3 --master --http :8000 \
                --processes 4 --threads 1 \
+               --static-map ${STATIC_URL}=${STATIC_ROOT} \
                --need-app \
                --mount ${URL_PREFIX:-/}=smbackend/wsgi.py \
                --manage-script-name \
                --die-on-term \
-               --strict
+               --strict"
 fi
