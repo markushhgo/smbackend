@@ -18,6 +18,7 @@ RUN echo "root:Docker!" | chpasswd
 COPY sshd_config /etc/ssh/
 
 COPY . .
+COPY data data_from_github
 RUN chmod u+x ./docker-entrypoint.sh
 RUN chmod u+x ./manage.py
 
