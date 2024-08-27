@@ -1,3 +1,6 @@
 *~
 *.env
-
+AzureUtil.ps1
+*.bicep
+*.bicepparam
+secrets.*

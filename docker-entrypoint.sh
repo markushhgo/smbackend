@@ -6,7 +6,7 @@ cp -r data_from_github/* data
 # Enable SSH and give it access to app setting env variables
 if [[ "$ENABLE_SSH" = "true" ]]; then
     service ssh start
-    eval $(printenv | sed -n "/^PWD=/!s/^\([^=]\+\)=\(.*\)$/export \1=\2/p" | sed 's/"/\\\"/g' | sed '/=/s//="/' | sed 's/$/"/' >> /etc/profile)
+    eval $(printenv | sed -n "/^PWD=/!s/^\([^=-]\+\)=\(.*\)$/export \1=\2/p" | sed 's/"/\\\"/g' | sed '/=/s//="/' | sed 's/$/"/' >> /etc/profile)
 fi
 
 if [[ "$APPLY_MIGRATIONS" = "true" ]]; then
