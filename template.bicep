@@ -10,6 +10,9 @@ param tileserverWebAppName string
 param uiWebAppName string
 @description('Cache name. Must be globally unique')
 param cacheName string
+@description('Key vault name. Must be globally unique. Lowercase and numbers only')
+@maxLength(24)
+@minLength(3)
 param keyvaultName string
 param serverfarmPlanName string
 @description('Storage account name. Must be globally unique. Lowercase and numbers only')
@@ -111,7 +114,7 @@ param uiAppSettings object = {
 param apiAppSettings object = {
   ACCESSIBILITY_SYSTEM_ID: 'd26b5f28-41c6-40a3-99f9-a1b762cc8191'
   ADDITIONAL_INSTALLED_APPS: 'smbackend_turku,ptv'
-  ALLOWED_HOSTS: '${apiWebAppName}.azurewebsites.net,127.0.0.1,localhost,partheite.haltu.net,tkuapp226,kehityspalvelukartta-api.turku.fi,kehityspalvelukartta.turku.fi'
+  ALLOWED_HOSTS: '${apiWebAppName}.azurewebsites.net,127.0.0.1,localhost,partheite.haltu.net,tkuapp226,kehityspalvelukartta-api.turku.fi,kehityspalvelukartta.turku.fi' // TODO
   BICYCLE_NETWORK_LOG_LEVEL: 'INFO'
   COOKIE_PREFIX: 'smdev' // TODO
   DEBUG: 'False'
@@ -194,6 +197,7 @@ var webAppRequirements = [
     name: apiWebAppName
     image: apiImageName
     allowKeyvaultSecrets: true
+    applicationGatewayAccessOnly: true
     appSettings: {
       DATABASE_URL: '@Microsoft.KeyVault(VaultName=${keyvault.name};SecretName=${keyvault::dbUrlSecret.name})'
       CACHE_LOCATION: '@Microsoft.KeyVault(VaultName=${keyvault.name};SecretName=${keyvault::cacheLocationSecret.name})'
@@ -209,6 +213,7 @@ var webAppRequirements = [
     name: tileserverWebAppName
     image: tileserverImageName
     allowKeyvaultSecrets: false
+    applicationGatewayAccessOnly: true
     appSettings: {}
     fileshares: {
       'tileserver-data': '/data'
@@ -218,6 +223,7 @@ var webAppRequirements = [
     name: uiWebAppName
     image: uiImageName
     allowKeyvaultSecrets: false
+    applicationGatewayAccessOnly: true
     appSettings: uiAppSettings
     fileshares: {}
   }
@@ -241,11 +247,6 @@ var subnetRequirements = [
   }
   {
     name: 'azureservices'
-    delegations: []
-    serviceEndpoints: []
-  }
-  {
-    name: 'applicationgateway'
     delegations: []
     serviceEndpoints: []
   }
@@ -672,6 +673,34 @@ resource privateDnsZoneGroups 'Microsoft.Network/privateEndpoints/privateDnsZone
   }
 ]
 
+resource applicationGatewayVnet 'Microsoft.Network/virtualNetworks@2020-11-01' existing = {
+  name: 'turku-common-vnet'
+  scope: resourceGroup('turku-common')
+}
+
+resource applicationGatewaySubnet 'Microsoft.Network/virtualNetworks/subnets@2022-01-01' existing = {
+  name: 'AgwSubnet'
+  parent: applicationGatewayVnet
+}
+
+var ipSecurityRestrictionsForApplicationGatewayAccessOnly = [
+  {
+    vnetSubnetResourceId: applicationGatewaySubnet.id
+    action: 'Allow'
+    tag: 'Default'
+    priority: 100
+    name: 'AllowAppGWInbound'
+    description: 'Allow HTTP/HTTPS from Application Gateway subnet'
+  }
+  {
+    ipAddress: 'Any'
+    action: 'Deny'
+    priority: 2147483647
+    name: 'Deny all'
+    description: 'Deny all access'
+  }
+]
+
 resource webApps 'Microsoft.Web/sites@2023-12-01' = [
   for webAppRequirement in webAppRequirements: {
     name: webAppRequirement.name
@@ -691,7 +720,7 @@ resource webApps 'Microsoft.Web/sites@2023-12-01' = [
       httpsOnly: true
       redundancyMode: 'None'
       publicNetworkAccess: 'Enabled'
-      virtualNetworkSubnetId: vnet::subnets[3].id
+      virtualNetworkSubnetId: vnet::subnets[2].id
       keyVaultReferenceIdentity: 'SystemAssigned'
       siteConfig: {
         numberOfWorkers: 1
@@ -701,6 +730,10 @@ resource webApps 'Microsoft.Web/sites@2023-12-01' = [
         http20Enabled: false
         functionAppScaleLimit: 0
         minimumElasticInstanceCount: 1
+        ipSecurityRestrictionsDefaultAction: webAppRequirement.applicationGatewayAccessOnly ? 'Deny' : 'Allow'
+        ipSecurityRestrictions: webAppRequirement.applicationGatewayAccessOnly ? ipSecurityRestrictionsForApplicationGatewayAccessOnly : []
+        scmIpSecurityRestrictionsDefaultAction: webAppRequirement.applicationGatewayAccessOnly ? 'Deny' : 'Allow'
+        scmIpSecurityRestrictionsUseMain: true
         azureStorageAccounts: reduce(
           items(webAppRequirement.fileshares),
           {},
@@ -719,24 +752,6 @@ resource webApps 'Microsoft.Web/sites@2023-12-01' = [
               }
             })
         )
-        ipSecurityRestrictions: [
-          {
-            ipAddress: 'Any'
-            action: 'Allow'
-            priority: 2147483647
-            name: 'Allow all'
-            description: 'Allow all access'
-          }
-        ]
-        scmIpSecurityRestrictions: [
-          {
-            ipAddress: 'Any'
-            action: 'Allow'
-            priority: 2147483647
-            name: 'Allow all'
-            description: 'Allow all access'
-          }
-        ]
         appSettings: map(
           items({
             DOCKER_ENABLE_CI: 'true'
@@ -824,12 +839,12 @@ resource webAppKeyvaultSecretUserRoleAssignments 'Microsoft.Authorization/roleAs
 @description('Grant the app service identity with ACR pull role permissions over the container registry. This allows pulling container images')
 resource webAppAcrPullRoleAssignments 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
   for i in range(0, length(webAppRequirements)): {
-  scope: containerRegistry
-  name: guid(resourceGroup().id, webApps[i].id, acrPullRoleDefinition.id)
-  properties: {
-    roleDefinitionId: acrPullRoleDefinition.id
-    principalId: webApps[i].identity.principalId
-    principalType: 'ServicePrincipal'
+    scope: containerRegistry
+    name: guid(resourceGroup().id, webApps[i].id, acrPullRoleDefinition.id)
+    properties: {
+      roleDefinitionId: acrPullRoleDefinition.id
+      principalId: webApps[i].identity.principalId
+      principalType: 'ServicePrincipal'
+    }
   }
-}
 ]

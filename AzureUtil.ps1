@@ -45,6 +45,7 @@ $dbAdminUser = Get-FromParameters dbAdminUsername
 $dbUser = Get-FromParameters dbUsername
 $dbDatabase = Get-FromParameters dbName
 $storage = Get-FromParameters storageAccountName
+$keyvault = Get-FromParameters keyvaultName
 $sshPort = 59123
 
 function Test-NetConnectionFaster($Addr, [int] $Port) {
@@ -84,7 +85,7 @@ function Import-AzurePostgresDbDump($dumpFile) {
     "Importing db dump..."
     $dbPassword = Get-SecretParameter dbPassword
     $env:PGPASSWORD = Get-SecretParameter dbAdminPassword
-    psql -h "$db.postgres.database.azure.com" -U $dbAdminUser -d $dbDatabase -c "CREATE USER $dbUser WITH ENCRYPTED PASSWORD '$dbPassword'; ALTER USER $dbUser CREATEDB; GRANT $dbUser TO $dbAdminUser; GRANT ALL ON SCHEMA public TO $dbUser;"
+    psql -h "$db.postgres.database.azure.com" -U $dbAdminUser -d $dbDatabase -c "CREATE USER ""$dbUser"" WITH ENCRYPTED PASSWORD '$dbPassword'; ALTER USER ""$dbUser"" CREATEDB; GRANT ""$dbUser"" TO $dbAdminUser; GRANT ALL ON SCHEMA public TO ""$dbUser"";"
     psql -h "$db.postgres.database.azure.com" -U $dbAdminUser -d $dbDatabase -f $dumpFile
     "Done"
 }
@@ -117,9 +118,23 @@ function Show-AzureWebAppLog($webApp) {
     az webapp log tail --resource-group $resourceGroup --name $webApp
 }
 
+function Get-SecretFromKeyvault($secretName) {
+    return az keyvault secret show --vault-name $keyvault -n $secretName -o tsv --query value
+}
+
 function Invoke-AzureWebAppConfig($webApp, $commandOrConfigs) {
+    function Parse($value) {
+        $secretName = [regex]::Match($value, 'SecretName=(\w+)').Groups[1].Value
+        if ($secretName) {
+            return Get-SecretFromKeyvault $secretName
+        }
+        else {
+            return $value
+        }
+    }
+
     if ($null -eq $commandOrConfigs) {
-        az webapp config appsettings list --resource-group $resourceGroup --name $webApp | ConvertFrom-Json | Sort-Object -Property name | ForEach-Object { "$($_.name)=$($_.value)" }
+        az webapp config appsettings list --resource-group $resourceGroup --name $webApp | ConvertFrom-Json | Sort-Object -Property name | ForEach-Object { "$($_.name)=$(Parse($_.value))" }
     }
     elseif ($commandOrConfigs[0] -eq "delete") {
         az webapp config appsettings delete --resource-group $resourceGroup --name $webApp --setting-names ($commandOrConfigs | Select-Object -Skip 1)
@@ -182,7 +197,7 @@ function Show-Usage {
     "./AzureUtil dbimport [dump.sql]"
     "`tImport a DB dump file to Azure Postgres DB Flexible Server instance with psql"
     "./AzureUtil config [api|tileserver|ui]"
-    "`tShow the WebApp's environment variables in a .env file format"
+    "`tShow the WebApp's environment variables in a .env file format, retrieving Key Vault secret references"
     "./AzureUtil config [api|tileserver|ui] setting1=value1 setting2=value2 ..."
     "`tAssign the given values in the WebApp's environment variables"
     "./AzureUtil config delete [api|tileserver|ui] setting1 setting2 ..."
@@ -198,7 +213,8 @@ function Show-Usage {
 switch ($args[0]) {
     "deploy" {
         az group create -l swedencentral -n $resourceGroup
-        az deployment group create --template-file ./template.bicep --parameters 'template.bicepparam' --parameters (Get-SecretParametersStringJoinedBySpaceExceptResourceGroup) --resource-group $resourceGroup
+        az deployment group create --template-file ./template.bicep --parameters 'template.bicepparam' --parameters (Get-SecretParametersStringJoinedBySpaceExceptResourceGroup) --resource-group $resourceGroup @($args | Select-Object -Skip 1)
+        return
     }
     "build" {
         $imageName = Get-ImageName $args[1]
@@ -206,6 +222,7 @@ switch ($args[0]) {
             Invoke-BuildAzureContainerImage $imageName $args[2]
         }
         else { Show-Usage }
+        return
     }
     "importimage" {
         $imageName = Get-ImageName $args[1]
@@ -213,6 +230,7 @@ switch ($args[0]) {
             Invoke-ImportAzureContainerImage $imageName $args[2]
         }
         else { Show-Usage }
+        return
     }
     "log" {
         $webAppName = Get-WebAppName $args[1]
@@ -220,6 +238,7 @@ switch ($args[0]) {
             Show-AzureWebAppLog $webAppName
         }
         else { Show-Usage }
+        return
     }
     "ssh" {
         $webAppName = Get-WebAppName $args[1]
@@ -227,12 +246,15 @@ switch ($args[0]) {
             Open-AzureWebAppSsh $webAppName
         }
         else { Show-Usage }
+        return
     }
     "db" {
         Open-AzurePostgresDb
+        return
     }
     "dbimport" {
         Import-AzurePostgresDbDump $args[1]
+        return
     }
     "config" {
         $webAppName = Get-WebAppName $args[1]
@@ -240,6 +262,7 @@ switch ($args[0]) {
             Invoke-AzureWebAppConfig $webAppName ($args | Select-Object -Skip 2)
         }
         else { Show-Usage }
+        return
     }
     "files" {
         $fileshare = Get-WebAppFileshare $args[1]
@@ -247,6 +270,7 @@ switch ($args[0]) {
             Show-FilesInFileshare $fileshare $args[2]
         }
         else { Show-Usage }
+        return
     }
     "copyfiles" {
         $fileshare = Get-WebAppFileshare $args[1]
@@ -254,9 +278,11 @@ switch ($args[0]) {
             Copy-FilesToFileshare $fileshare ($args | Select-Object -Skip 2)
         }
         else { Show-Usage }
+        return
     }
     "param" {
         Write-Output (Get-FromParameters $args[1])
+        return
     }
     Default {
         Show-Usage

@@ -22,5 +22,8 @@ smbackend/test/tpr_mock_data/*.json
 *.mo
 .django_secret
 
+# Misc
+.vscode/*
+
 # Secrets
 secrets.*
