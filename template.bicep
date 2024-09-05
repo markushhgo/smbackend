@@ -19,6 +19,8 @@ param serverfarmPlanName string
 @maxLength(24)
 @minLength(3)
 param storageAccountName string
+param apiOutboundIpName string
+param natGatewayName string
 param vnetName string
 @description('Container registry name. Must be globally unique. Alphanumeric only')
 @maxLength(50)
@@ -244,16 +246,19 @@ var subnetRequirements = [
     name: 'default'
     delegations: []
     serviceEndpoints: []
+    enableNatGateway: false
   }
   {
     name: 'azureservices'
     delegations: []
     serviceEndpoints: []
+    enableNatGateway: false
   }
   {
     name: 'api'
     delegations: ['Microsoft.Web/serverfarms'] // Required
     serviceEndpoints: []
+    enableNatGateway: true
   }
 ]
 
@@ -348,6 +353,27 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
   }
 }
 
+resource apiOutboundIp 'Microsoft.Network/publicIPAddresses@2024-01-01' existing = {
+  name: apiOutboundIpName
+  scope: resourceGroup('turku-common')
+}
+
+resource natGateway 'Microsoft.Network/natGateways@2024-01-01' = {
+  name: natGatewayName
+  location: location
+  sku: {
+    name: 'Standard'
+  }
+  properties: {
+    idleTimeoutInMinutes: 4
+    publicIpAddresses: [
+      {
+        id: apiOutboundIp.id
+      }
+    ]
+  }
+}
+
 resource vnet 'Microsoft.Network/virtualNetworks@2023-11-01' = {
   name: vnetName
   location: location
@@ -368,6 +394,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2023-11-01' = {
       name: subnetRequirements[i].name
       properties: {
         addressPrefixes: ['10.0.${i}.0/24']
+        natGateway: subnetRequirements[i].enableNatGateway ? { id: natGateway.id } : null
         serviceEndpoints: [
           for serviceEndpoint in subnetRequirements[i].serviceEndpoints: {
             service: serviceEndpoint
@@ -731,7 +758,9 @@ resource webApps 'Microsoft.Web/sites@2023-12-01' = [
         functionAppScaleLimit: 0
         minimumElasticInstanceCount: 1
         ipSecurityRestrictionsDefaultAction: webAppRequirement.applicationGatewayAccessOnly ? 'Deny' : 'Allow'
-        ipSecurityRestrictions: webAppRequirement.applicationGatewayAccessOnly ? ipSecurityRestrictionsForApplicationGatewayAccessOnly : []
+        ipSecurityRestrictions: webAppRequirement.applicationGatewayAccessOnly
+          ? ipSecurityRestrictionsForApplicationGatewayAccessOnly
+          : []
         scmIpSecurityRestrictionsDefaultAction: webAppRequirement.applicationGatewayAccessOnly ? 'Deny' : 'Allow'
         scmIpSecurityRestrictionsUseMain: true
         azureStorageAccounts: reduce(
