@@ -13,7 +13,7 @@ function Get-SecretParameter($key) {
 }
 
 function Get-SecretParametersStringJoinedBySpaceExceptResourceGroup {
-    return $secretParameters.PSObject.Properties | Where-Object { $_.Name -ne "resourceGroup" } | ForEach-Object { "$($_.Name)=$($_.Value)" }
+    return $secretParameters.PSObject.Properties | Where-Object { $_.Name -ne "resourceGroup" } | ForEach-Object { "$($_.Name)=`"$($_.Value)`"" }
 }
 
 $resourceGroup = Get-SecretParameter resourceGroup

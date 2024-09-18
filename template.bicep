@@ -1,6 +1,8 @@
 param location string = resourceGroup().location
 param apiImageName string
+param apiUrl string
 param tileserverImageName string
+param tileserverUrl string
 param uiImageName string
 @description('API WebApp name. Must be globally unique')
 param apiWebAppName string
@@ -37,8 +39,6 @@ param dbUsername string
 param dbAdminPassword string = ''
 @secure()
 param dbPassword string = ''
-param apiUrl string
-param tileserverUrl string
 
 // Application specific parameters
 @secure()
@@ -304,6 +304,11 @@ var goforeIps = {
   goforeKamppi: '81.175.255.179' // Gofore Kamppi egress
   goforeTampere: '82.141.89.43' // Gofore Tampere egress
   goforeVpn: '80.248.248.85' // Gofore VPN egress
+}
+var goforeCidrs = {
+  goforeKamppi: '${goforeIps.goforeKamppi}/24'
+  goforeTampere: '${goforeIps.goforeTampere}/24'
+  goforeVpn: '${goforeIps.goforeVpn}/24'
 }
 var goforeAndAzureContainerRegistryIps = union(goforeIps, {
   // Needed to build an image in the container registry, networkRuleBypassOptions: AzureServices is not enough for some reason. These IPs can probably change. Sourced from https://www.microsoft.com/en-us/download/details.aspx?id=56519
@@ -710,6 +715,40 @@ resource applicationGatewaySubnet 'Microsoft.Network/virtualNetworks/subnets@202
   parent: applicationGatewayVnet
 }
 
+var ipSecurityRestrictionsForGoforeIpsOnly = [
+  {
+    action: 'Allow'
+    tag: 'Default'
+    priority: 100
+    name: 'AllowGoforeKamppiInbound'
+    description: 'Allow HTTP/HTTPS from Application Gateway subnet'
+    ipAddress: goforeCidrs.goforeKamppi
+  }
+  {
+    action: 'Allow'
+    tag: 'Default'
+    priority: 101
+    name: 'AllowGoforeTampereInbound'
+    description: 'Allow HTTP/HTTPS from Application Gateway subnet'
+    ipAddress: goforeCidrs.goforeTampere
+  }
+  {
+    action: 'Allow'
+    tag: 'Default'
+    priority: 102
+    name: 'AllowGoforeVpnInbound'
+    description: 'Allow HTTP/HTTPS from Application Gateway subnet'
+    ipAddress: goforeCidrs.goforeVpn
+  }
+  {
+    ipAddress: 'Any'
+    action: 'Deny'
+    priority: 2147483647
+    name: 'Deny all'
+    description: 'Deny all access'
+  }
+]
+
 var ipSecurityRestrictionsForApplicationGatewayAccessOnly = [
   {
     vnetSubnetResourceId: applicationGatewaySubnet.id
@@ -761,8 +800,9 @@ resource webApps 'Microsoft.Web/sites@2023-12-01' = [
         ipSecurityRestrictions: webAppRequirement.applicationGatewayAccessOnly
           ? ipSecurityRestrictionsForApplicationGatewayAccessOnly
           : []
-        scmIpSecurityRestrictionsDefaultAction: webAppRequirement.applicationGatewayAccessOnly ? 'Deny' : 'Allow'
-        scmIpSecurityRestrictionsUseMain: true
+        scmIpSecurityRestrictionsDefaultAction: 'Deny'
+        scmIpSecurityRestrictionsUseMain: false
+        scmIpSecurityRestrictions: ipSecurityRestrictionsForGoforeIpsOnly
         azureStorageAccounts: reduce(
           items(webAppRequirement.fileshares),
           {},

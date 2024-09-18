@@ -1,5 +1,6 @@
 *~
 *.env
+.vscode
 AzureUtil.ps1
 *.bicep
 *.bicepparam
