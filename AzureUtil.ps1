@@ -1,5 +1,11 @@
 function Get-BicepParams($path) {
-    return ((az bicep build-params -f $path --stdout 2>$nul | ConvertFrom-Json).parametersJson | ConvertFrom-Json).parameters
+    $result = az bicep build-params -f $path --stdout
+    if ($LASTEXITCODE -eq 0) {
+        return (($result | ConvertFrom-Json).parametersJson | ConvertFrom-Json).parameters.PSObject.Properties | ForEach-Object -begin {$h=@{}} -process {$h."$($_.Name)" = $_.Value.value} -end {$h}
+    }
+    else {
+        Write-Error -Message "Error in .bicepparams file" -ErrorAction Stop
+    }
 }
 
 function Get-JsonParams($path) {
@@ -30,7 +36,7 @@ $env:RESOURCE_PREFIX = $resourceGroup
 $parameters = Get-BicepParams ./template.bicepparam
 
 function Get-FromParameters($key) {
-    return $parameters.$key.value
+    return $parameters.$key
 }
 
 $registry = Get-FromParameters containerRegistryName
