@@ -116,7 +116,7 @@ param uiAppSettings object = {
 param apiAppSettings object = {
   ACCESSIBILITY_SYSTEM_ID: 'd26b5f28-41c6-40a3-99f9-a1b762cc8191'
   ADDITIONAL_INSTALLED_APPS: 'smbackend_turku,ptv'
-  ALLOWED_HOSTS: '${apiWebAppName}.azurewebsites.net,127.0.0.1,localhost,partheite.haltu.net,tkuapp226,kehityspalvelukartta-api.turku.fi,kehityspalvelukartta.turku.fi' // TODO
+  ALLOWED_HOSTS: '${apiWebAppName}.azurewebsites.net,127.0.0.1,localhost,partheite.haltu.net,tkuapp226,kehityspalvelukartta-api.turku.fi,kehityspalvelukartta.turku.fi,palvelukartta-api-testi.turku.fi,' // TODO
   CSRF_TRUSTED_ORIGINS: 'https://palvelukartta-api-testi.turku.fi/'
   BICYCLE_NETWORK_LOG_LEVEL: 'INFO'
   COOKIE_PREFIX: 'smdev' // TODO
