@@ -5,6 +5,7 @@ var sanitizedPrefix = replace(prefix, '-', '')
 param apiImageName = 'api'
 param uiImageName = 'ui'
 param tileserverImageName = 'tileserver'
+param apiInternalUrl = '${prefix}-api.azurewebsites.net'
 param apiUrl = 'https://palvelukartta-api-testi.turku.fi'
 param apiWebAppName = '${prefix}-api'
 param uiWebAppName = '${prefix}-ui'
