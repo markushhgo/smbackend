@@ -130,12 +130,10 @@ param apiAppSettings object = {
   ECO_COUNTER_LOG_LEVEL: 'INFO'
   ECO_COUNTER_OBSERVATIONS_URL: 'https://data.turku.fi/cjtv3brqr7gectdv7rfttc/counters-15min.csv'
   ECO_COUNTER_STATIONS_URL: 'https://dev.turku.fi/datasets/ecocounter/liikennelaskimet.geojson'
-  EMAIL_BACKEND: 'django.core.mail.backends.smtp.EmailBackend' // TODO
-  EMAIL_FROM: 'iikka.merilainen@rebase.fi' // TODO
-  EMAIL_HOST: 'smtp.sendgrid.net' // TODO
-  EMAIL_HOST_PASSWORD: emailHostPassword // TODO
-  EMAIL_HOST_USER: 'apikey' // TODO
-  EMAIL_PORT: '587'
+  EMAIL_BACKEND: 'django.core.mail.backends.smtp.EmailBackend'
+  EMAIL_FROM: 'testipalvelukartta@turku.fi'
+  EMAIL_HOST: 'smtp.turku.fi'
+  EMAIL_PORT: '25'
   EMAIL_USE_TLS: 'True'
   ENABLE_SSH: 'true'
   ENVIRONMENT_DATA_LOG_LEVEL: 'INFO'
