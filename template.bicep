@@ -68,7 +68,7 @@ param turkuApiKey string = ''
 param yitClientSecret string = ''
 
 param uiAppSettings object = {
-  ACCESSIBILITY_SENTENCE_API: 'https://asiointi.hel.fi/kapaesteettomyys_testi/api/v1/accessibility/servicepoints/d26b5f28-41c6-40a3-99f9-a1b762cc8191'
+  ACCESSIBILITY_SENTENCE_API: 'https://tpr.hel.fi/kapaesteettomyys/api/v1/accessibility/servicepoints/d26b5f28-41c6-40a3-99f9-a1b762cc8191'
   ACCESSIBLE_MAP_URL: '${tileserverUrl}/styles/high-contrast-map-layer/{z}/{x}/{y}'
   AIR_MONITORING_API: '${apiUrl}/environment_data/api/v1'
   CITIES: 'turku,kaarina,naantali,raisio'
