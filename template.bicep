@@ -1,5 +1,6 @@
 param location string = resourceGroup().location
 param apiImageName string
+param apiInternalUrl string
 param apiUrl string
 param tileserverImageName string
 param tileserverUrl string
@@ -165,8 +166,8 @@ param uiAppSettings object = {
 param apiAppSettings object = {
   ACCESSIBILITY_SYSTEM_ID: 'd26b5f28-41c6-40a3-99f9-a1b762cc8191'
   ADDITIONAL_INSTALLED_APPS: 'smbackend_turku,ptv'
-  ALLOWED_HOSTS: '${apiWebAppName}.azurewebsites.net,127.0.0.1,localhost,xieite.haltu.net,tkuapp228,palvelukartta-api.turku.fi,palvelukartta.turku.fi' // TODO
-  CSRF_TRUSTED_ORIGINS: 'https://palvelukartta-api.turku.fi/'  // TODO
+  ALLOWED_HOSTS: '${apiInternalUrl},127.0.0.1,localhost,xieite.haltu.net,tkuapp228,palvelukartta-api.turku.fi,palvelukartta.turku.fi' // TODO
+  CSRF_TRUSTED_ORIGINS: apiUrl
   BICYCLE_NETWORK_LOG_LEVEL: 'INFO'
   COOKIE_PREFIX: 'smdev' // TODO
   DEBUG: 'False'
@@ -237,8 +238,8 @@ param apiAppSettings object = {
 // param apiAppSettings object = {
 //   ACCESSIBILITY_SYSTEM_ID: 'd26b5f28-41c6-40a3-99f9-a1b762cc8191'
 //   ADDITIONAL_INSTALLED_APPS: 'smbackend_turku,ptv'
-//   ALLOWED_HOSTS: '${apiWebAppName}.azurewebsites.net,127.0.0.1,localhost,partheite.haltu.net,tkuapp226,kehityspalvelukartta-api.turku.fi,kehityspalvelukartta.turku.fi' // TODO
-//   CSRF_TRUSTED_ORIGINS: 'https://palvelukartta-api-testi.turku.fi/'  // TODO
+//   ALLOWED_HOSTS: '${apiInternalUrl},127.0.0.1,localhost,partheite.haltu.net,tkuapp226,kehityspalvelukartta-api.turku.fi,kehityspalvelukartta.turku.fi' // TODO
+//   CSRF_TRUSTED_ORIGINS: apiUrl
 //   BICYCLE_NETWORK_LOG_LEVEL: 'INFO'
 //   COOKIE_PREFIX: 'smdev' // TODO
 //   DEBUG: 'False'
