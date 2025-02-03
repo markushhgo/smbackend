@@ -72,7 +72,6 @@ param uiAppSettings object = {
   ACCESSIBILITY_SENTENCE_API: 'https://tpr.hel.fi/kapaesteettomyys/api/v1/accessibility/servicepoints/d26b5f28-41c6-40a3-99f9-a1b762cc8191'
   ACCESSIBLE_MAP_URL: '${tileserverUrl}/styles/high-contrast-map-layer/{z}/{x}/{y}'
   AIR_MONITORING_API: '${apiUrl}/environment_data/api/v1'
-  APPLY_MIGRATIONS: 'true'
   CITIES: 'turku,kaarina,naantali,raisio'
   DIGITRANSIT_API: 'https://api.digitransit.fi/routing/v1/routers/waltti/index/graphql'
   DIGITRANSIT_API_KEY: digitransitApiKey
@@ -167,6 +166,7 @@ param apiAppSettings object = {
   ACCESSIBILITY_SYSTEM_ID: 'd26b5f28-41c6-40a3-99f9-a1b762cc8191'
   ADDITIONAL_INSTALLED_APPS: 'smbackend_turku,ptv'
   ALLOWED_HOSTS: '${apiInternalUrl},127.0.0.1,localhost,xieite.haltu.net,tkuapp228,palvelukartta-api.turku.fi,palvelukartta.turku.fi' // TODO
+  APPLY_MIGRATIONS: 'true'
   CSRF_TRUSTED_ORIGINS: apiUrl
   BICYCLE_NETWORK_LOG_LEVEL: 'INFO'
   COOKIE_PREFIX: 'smdev' // TODO
@@ -239,6 +239,7 @@ param apiAppSettings object = {
 //   ACCESSIBILITY_SYSTEM_ID: 'd26b5f28-41c6-40a3-99f9-a1b762cc8191'
 //   ADDITIONAL_INSTALLED_APPS: 'smbackend_turku,ptv'
 //   ALLOWED_HOSTS: '${apiInternalUrl},127.0.0.1,localhost,partheite.haltu.net,tkuapp226,kehityspalvelukartta-api.turku.fi,kehityspalvelukartta.turku.fi' // TODO
+//   APPLY_MIGRATIONS: 'true'
 //   CSRF_TRUSTED_ORIGINS: apiUrl
 //   BICYCLE_NETWORK_LOG_LEVEL: 'INFO'
 //   COOKIE_PREFIX: 'smdev' // TODO
