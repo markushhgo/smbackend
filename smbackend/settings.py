@@ -47,11 +47,10 @@ env = environ.Env(
     GEO_SEARCH_LOCATION=(str, None),
     GEO_SEARCH_API_KEY=(str, None),
     PTV_ID_OFFSET=(int, None),
-    ECO_COUNTER_STATIONS_URL=(str, None),
     ECO_COUNTER_OBSERVATIONS_URL=(str, None),
     TRAFFIC_COUNTER_OBSERVATIONS_BASE_URL=(str, None),
-    LAM_COUNTER_STATIONS_URL=(str, None),
-    LAM_COUNTER_API_BASE_URL=(str, None),
+    LAM_COUNTER_STATIONS_URL=(str, ""),
+    LAM_COUNTER_API_BASE_URL=(str, ""),
     GAS_FILLING_STATIONS_IDS=(dict, {}),
     CHARGING_STATIONS_IDS=(dict, {}),
     BICYCLE_STANDS_IDS=(dict, {}),
@@ -364,6 +363,11 @@ DOC_ENDPOINTS = [
     "/exceptional_situations/api/v1/situation/",
     "/exceptional_situations/api/v1/situation_type/",
     "/api/v2/search",
+    "/api/v2/address/",
+    "/api/v2/administrative_division/",
+    "/api/v2/service_node/",
+    "/api/v2/service/",
+    "/api/v2/unit/",
 ]
 
 
@@ -432,7 +436,6 @@ PTV_ID_OFFSET = env("PTV_ID_OFFSET")
 GEO_SEARCH_LOCATION = env("GEO_SEARCH_LOCATION")
 GEO_SEARCH_API_KEY = env("GEO_SEARCH_API_KEY")
 ECO_COUNTER_OBSERVATIONS_URL = env("ECO_COUNTER_OBSERVATIONS_URL")
-ECO_COUNTER_STATIONS_URL = env("ECO_COUNTER_STATIONS_URL")
 TRAFFIC_COUNTER_OBSERVATIONS_BASE_URL = env("TRAFFIC_COUNTER_OBSERVATIONS_BASE_URL")
 LAM_COUNTER_STATIONS_URL = env("LAM_COUNTER_STATIONS_URL")
 LAM_COUNTER_API_BASE_URL = env("LAM_COUNTER_API_BASE_URL")

@@ -50,6 +50,7 @@ COUNTER_START_YEARS = {
 }
 
 TRAFFIC_COUNTER_METADATA_GEOJSON = "traffic_counter_metadata.geojson"
+ECO_COUNTER_STATIONS_GEOJSON = "eco_counter_stations.geojson"
 LAM_STATIONS_API_FETCH_URL = (
     settings.LAM_COUNTER_API_BASE_URL
     + "?api=liikennemaara&tyyppi=h&pvm={start_date}&loppu={end_date}"
@@ -123,7 +124,7 @@ TELRAAM_COUNTER_DATA_TIME_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
 
 TELRAAM_COUNTER_CSV_FILE_PATH = f"{settings.MEDIA_ROOT}/telraam_data/"
 TELRAAM_COUNTER_CSV_FILE = (
-    TELRAAM_COUNTER_CSV_FILE_PATH + "telraam_data_{mac}_{day}_{month}_{year}.csv"
+    TELRAAM_COUNTER_CSV_FILE_PATH + "telraam_data_{mac}_{year}_{month}_{day}.csv"
 )
 TELRAAM_STATION_350457790598039 = 350457790598039
 TELRAAM_STATION_350457790600975 = 350457790600975

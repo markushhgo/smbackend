@@ -1,4 +1,5 @@
 import io
+import json
 import logging
 from datetime import date, timedelta
 
@@ -16,6 +17,7 @@ from eco_counter.constants import (
     COUNTERS,
     COUNTERS_LIST,
     ECO_COUNTER,
+    ECO_COUNTER_STATIONS_GEOJSON,
     INDEX_COLUMN_NAME,
     LAM_COUNTER,
     LAM_STATION_LOCATIONS,
@@ -120,8 +122,8 @@ def get_is_active(station):
     res = {}
     for days in num_days:
         from_date = date.today() - timedelta(days=days - 1)
-        day_qs = Day.objects.filter(station=station, date__gte=from_date)
-        day_data_qs = DayData.objects.filter(day__in=day_qs)
+        day_qs = Day.objects.filter(date__gte=from_date)
+        day_data_qs = DayData.objects.filter(station=station, day__in=day_qs)
         if day_data_qs.filter(Q_EXP).count() > 0:
             res[days] = True
         else:
@@ -261,7 +263,7 @@ def get_lam_dataframe(csv_url):
     assert (
         response.status_code == 200
     ), "Fetching LAM data from {} , status code {}".format(
-        settings.ECO_COUNTER_STATIONS_URL, response.status_code
+        response.url, response.status_code
     )
     string_data = response.content
     csv_data = pd.read_csv(io.StringIO(string_data.decode("utf-8")), delimiter=";")
@@ -410,14 +412,11 @@ def get_traffic_counter_stations():
 
 def get_eco_counter_stations():
     stations = []
-    response = requests.get(settings.ECO_COUNTER_STATIONS_URL)
-    assert (
-        response.status_code == 200
-    ), "Fetching stations from {} , status code {}".format(
-        settings.ECO_COUNTER_STATIONS_URL, response.status_code
-    )
-    response_json = response.json()
-    features = response_json["features"]
+    data_file = f"{get_root_dir()}/eco_counter/data/{ECO_COUNTER_STATIONS_GEOJSON}"
+    json_data = None
+    with open(data_file, "r") as file:
+        json_data = json.load(file)
+    features = json_data.get("features", None)
     for feature in features:
         stations.append(ObservationStation(ECO_COUNTER, feature))
     return stations

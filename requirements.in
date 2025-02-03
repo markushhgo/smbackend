@@ -1,4 +1,4 @@
-Django>=4.0.8
+Django>4
 djangorestframework
 djangorestframework-jsonp
 Markdown
@@ -44,3 +44,4 @@ polyline
 drf-spectacular
 xmltodict
 freezegun
+geopy
