@@ -13,17 +13,15 @@ GDAL_LIBRARY_PATH = os.environ.get("GDAL_LIBRARY_PATH")
 GEOS_LIBRARY_PATH = os.environ.get("GEOS_LIBRARY_PATH")
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-# TRUST_X_FORWARDED_HOST=(bool, False),
 BASE_DIR = str(Path(__file__).resolve().parent.parent)
 env = environ.Env(
     DEBUG=(bool, False),
     LANGUAGES=(list, ["fi", "sv", "en"]),
     DATABASE_URL=(str, "postgis:///servicemap"),
     SECRET_KEY=(str, "temp_key"),
+    TRUST_X_FORWARDED_HOST=(bool, False),
     SECURE_PROXY_SSL_HEADER=(tuple, None),
     ALLOWED_HOSTS=(list, []),
-    CSRF_TRUSTED_ORIGINS=(list, []),
-    USE_X_FORWARDED_HOST=(list, []),
     SENTRY_DSN=(str, ""),
     SENTRY_ENVIRONMENT=(str, ""),
     COOKIE_PREFIX=(str, "servicemap"),
@@ -67,10 +65,8 @@ env = environ.Env(
     YIT_TOKEN_URL=(str, None),
     KUNTEC_KEY=(str, None),
     EMAIL_BACKEND=(str, None),
-    EMAIL_FROM=(str, None),
     EMAIL_HOST=(str, None),
     EMAIL_HOST_USER=(str, None),
-    EMAIL_HOST_PASSWORD=(str, None),
     EMAIL_PORT=(int, None),
     EMAIL_USE_TLS=(bool, None),
     TELRAAM_TOKEN=(str, None),
@@ -99,7 +95,6 @@ DEBUG = env("DEBUG")
 SECRET_KEY = env("SECRET_KEY")
 TEMPLATE_DEBUG = False
 ALLOWED_HOSTS = env("ALLOWED_HOSTS")
-CSRF_TRUSTED_ORIGINS = env("CSRF_TRUSTED_ORIGINS")
 DJANGO_LOG_LEVEL = env("DJANGO_LOG_LEVEL")
 TURKU_SERVICES_IMPORT_LOG_LEVEL = env("TURKU_SERVICES_IMPORT_LOG_LEVEL")
 SEARCH_LOG_LEVEL = env("SEARCH_LOG_LEVEL")
@@ -195,8 +190,7 @@ TIME_ZONE = "Europe/Helsinki"
 USE_I18N = True
 USE_TZ = True
 
-# USE_X_FORWARDED_HOST = env("TRUST_X_FORWARDED_HOST")
-USE_X_FORWARDED_HOST = True
+USE_X_FORWARDED_HOST = env("TRUST_X_FORWARDED_HOST")
 SECURE_PROXY_SSL_HEADER = env("SECURE_PROXY_SSL_HEADER")
 CORS_ORIGIN_ALLOW_ALL = True
 TASTYPIE_DEFAULT_FORMATS = ["json"]
@@ -257,10 +251,8 @@ SHORTCUTTER_UNIT_URL = env("SHORTCUTTER_UNIT_URL")
 
 
 EMAIL_BACKEND = env("EMAIL_BACKEND")
-EMAIL_FROM = env("EMAIL_FROM")
 EMAIL_HOST = env("EMAIL_HOST")
 EMAIL_HOST_USER = env("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 EMAIL_PORT = env("EMAIL_PORT")
 EMAIL_USE_TLS = env("EMAIL_USE_TLS")
 

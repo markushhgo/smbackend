@@ -24,7 +24,6 @@ from services.management.commands.services_import.services import (
 from services.models import (
     Department,
     ExclusionRule,
-    ExclusionWord,
     Service,
     ServiceNode,
     Unit,
@@ -278,15 +277,6 @@ def addresses(streets, municipality):
         number=1,
         full_name="Tarkk'ampujankatu 1",
     )
-    Address.objects.create(
-        municipality_id=municipality.id,
-        location=Point(60.44879002342721, 22.283629416961055),
-        id=7,
-        street_id=46,
-        number=1,
-        full_name="Kellonsoittajankatu 1",
-    )
-    generate_syllables(Address)
     Address.objects.update(search_column_fi=get_search_column(Address, "fi"))
     return Address.objects.all()
 
@@ -324,7 +314,6 @@ def streets():
     Street.objects.create(id=43, name="Markulantie", municipality_id="turku")
     Street.objects.create(id=44, name="Yliopistonkatu", municipality_id="turku")
     Street.objects.create(id=45, name="Tarkk'ampujankatu", municipality_id="turku")
-    Street.objects.create(id=46, name="Kellonsoittajankatu", municipality_id="turku")
     return Street.objects.all()
 
 
@@ -332,9 +321,3 @@ def streets():
 def exclusion_rules():
     ExclusionRule.objects.create(id=1, word="tekojää", exclusion="-nurmi")
     return ExclusionRule.objects.all()
-
-
-@pytest.fixture
-def exclusion_words():
-    ExclusionWord.objects.create(id=1, word="katu", language_short="fi")
-    return ExclusionWord.objects.all()

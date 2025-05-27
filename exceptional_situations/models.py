@@ -2,7 +2,6 @@ from datetime import datetime
 
 from django.contrib.gis.db import models
 from django.utils import timezone
-from munigeo.models import Municipality
 
 PROJECTION_SRID = 4326
 
@@ -33,14 +32,13 @@ class SituationAnnouncement(models.Model):
     start_time = models.DateTimeField()
     end_time = models.DateTimeField(null=True, blank=True)
     additional_info = models.JSONField(null=True, blank=True)
-    location = models.ForeignKey(
+    location = models.OneToOneField(
         SituationLocation,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="announcements",
+        related_name="announcement",
     )
-    municipalities = models.ManyToManyField(Municipality)
 
     class Meta:
         ordering = ["start_time"]
