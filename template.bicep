@@ -162,6 +162,7 @@ param uiAppSettings object = {
 //   WEBSITES_ENABLE_APP_SERVICE_STORAGE: 'false'
 // }
 
+// Prod
 param apiAppSettings object = {
   ACCESSIBILITY_SYSTEM_ID: 'd26b5f28-41c6-40a3-99f9-a1b762cc8191'
   ADDITIONAL_INSTALLED_APPS: 'smbackend_turku,ptv'
@@ -715,7 +716,7 @@ resource waitForDbReady 'Microsoft.Resources/deploymentScripts@2023-08-01' = {
   location: location
   properties: {
     azPowerShellVersion: '3.0'
-    scriptContent: 'start-sleep -Seconds 500'
+    scriptContent: 'start-sleep -Seconds 300'
     cleanupPreference: 'Always'
     retentionInterval: 'PT1H'
   }
@@ -728,7 +729,7 @@ resource waitForDbReadyAndConfigured 'Microsoft.Resources/deploymentScripts@2023
   location: location
   properties: {
     azPowerShellVersion: '3.0'
-    scriptContent: 'start-sleep -Seconds 320'
+    scriptContent: 'start-sleep -Seconds 120'
     cleanupPreference: 'Always'
     retentionInterval: 'PT1H'
   }

@@ -36,7 +36,7 @@ def shared_task_email(func):
                 send_mail(
                     subject,
                     message,
-                    settings.EMAIL_HOST_USER,
+                    settings.EMAIL_FROM,
                     notify_emails,
                     fail_silently=False,
                 )
