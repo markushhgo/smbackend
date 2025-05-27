@@ -73,7 +73,7 @@ param uiAppSettings object = {
   ACCESSIBLE_MAP_URL: '${tileserverUrl}/styles/high-contrast-map-layer/{z}/{x}/{y}'
   AIR_MONITORING_API: '${apiUrl}/environment_data/api/v1'
   CITIES: 'turku,kaarina,naantali,raisio'
-  DIGITRANSIT_API: 'https://api.digitransit.fi/routing/v1/routers/waltti/index/graphql'
+  DIGITRANSIT_API: 'https://api.digitransit.fi/routing/v2/waltti/gtfs/v1'
   DIGITRANSIT_API_KEY: digitransitApiKey
   EVENTS_API: 'https://linkedevents-api.turku.fi/v1' //ei käytössä?
   FEEDBACK_ADDITIONAL_INFO_LINK: 'https://opaskartta.turku.fi/eFeedback/fi/Home/AboutService'
@@ -120,7 +120,7 @@ param uiAppSettings object = {
 //   ACCESSIBLE_MAP_URL: '${tileserverUrl}/styles/high-contrast-map-layer/{z}/{x}/{y}'
 //   AIR_MONITORING_API: '${apiUrl}/environment_data/api/v1'
 //   CITIES: 'turku,kaarina,naantali,raisio'
-//   DIGITRANSIT_API: 'https://api.digitransit.fi/routing/v1/routers/waltti/index/graphql'
+//   DIGITRANSIT_API: 'https://api.digitransit.fi/routing/v2/waltti/gtfs/v1'
 //   DIGITRANSIT_API_KEY: digitransitApiKey
 //   EVENTS_API: 'https://linkedevents-api.turku.fi/v1'
 //   FEEDBACK_ADDITIONAL_INFO_LINK: 'https://opaskartta.turku.fi/eFeedback/fi/Home/AboutService'
@@ -162,16 +162,17 @@ param uiAppSettings object = {
 //   WEBSITES_ENABLE_APP_SERVICE_STORAGE: 'false'
 // }
 
+// Prod
 param apiAppSettings object = {
   ACCESSIBILITY_SYSTEM_ID: 'd26b5f28-41c6-40a3-99f9-a1b762cc8191'
   ADDITIONAL_INSTALLED_APPS: 'smbackend_turku,ptv'
-  ALLOWED_HOSTS: '${apiInternalUrl},127.0.0.1,localhost,xieite.haltu.net,tkuapp228,palvelukartta-api.turku.fi,palvelukartta.turku.fi' // TODO
+  ALLOWED_HOSTS: '${apiInternalUrl},169.254.129.6,127.0.0.1,localhost,xieite.haltu.net,tkuapp228,palvelukartta-api.turku.fi,palvelukartta.turku.fi'
   APPLY_MIGRATIONS: 'true'
   CSRF_TRUSTED_ORIGINS: apiUrl
   BICYCLE_NETWORK_LOG_LEVEL: 'INFO'
   COOKIE_PREFIX: 'smdev' // TODO
   DEBUG: 'False'
-  DEFAULT_FROM_EMAIL: 'palvelukartta@turku.fi' // TODO
+  DEFAULT_FROM_EMAIL: 'palvelukartta@turku.fi'
   DJANGO_LOG_LEVEL: 'INFO'
   // DJANGO_SUPERUSER_EMAIL: 'admin@admin.com' // TODO
   // DJANGO_SUPERUSER_PASSWORD: djangoSuperuserPassword // TODO
@@ -179,7 +180,7 @@ param apiAppSettings object = {
   ECO_COUNTER_LOG_LEVEL: 'INFO'
   ECO_COUNTER_OBSERVATIONS_URL: 'https://data.turku.fi/cjtv3brqr7gectdv7rfttc/counters-15min.csv'
   ECO_COUNTER_STATIONS_URL: 'https://dev.turku.fi/datasets/ecocounter/liikennelaskimet.geojson'
-  EMAIL_BACKEND: 'django.core.mail.backends.smtp.EmailBackend' // TODO
+  EMAIL_BACKEND: 'django.core.mail.backends.smtp.EmailBackend'
   EMAIL_FROM: 'palvelukartta@turku.fi'
   EMAIL_HOST: 'smtp.turku.fi'
   // ?EMAIL_HOST_PASSWORD: emailHostPassword // TODO
@@ -223,6 +224,7 @@ param apiAppSettings object = {
   TURKU_API_KEY: turkuApiKey
   TURKU_SERVICES_IMPORT_LOG_LEVEL: 'INFO'
   TURKU_WFS_URL: 'https://opaskartta.turku.fi/TeklaOGCWeb/WFS.ashx'
+  USE_X_FORWARDED_HOST: 'True'
   WEBSITES_ENABLE_APP_SERVICE_STORAGE: 'false'
   WEBSITES_PORT: '8000'
   YIT_CLIENT_ID: '01797d9f-1ab5-4d01-880d-01dfa4925a27'
