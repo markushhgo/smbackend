@@ -11,7 +11,6 @@ from dateutil import parser
 from django.contrib.gis.geos import GEOSGeometry, Polygon
 from django.core.management import BaseCommand
 from django.utils import timezone
-from munigeo.models import Municipality
 
 from exceptional_situations.models import (
     PROJECTION_SRID,
@@ -66,19 +65,6 @@ class Command(BaseCommand):
         }
         return get_or_create(SituationLocation, filter)
 
-    def get_municipality_lower_names(self, location_details):
-        names = []
-        road_address_location = location_details.get("roadAddressLocation", None)
-        if road_address_location:
-            primary_point = road_address_location.get("primaryPoint", None)
-            if primary_point:
-                names.append(primary_point["municipality"].lower())
-            secondary_point = road_address_location.get("secondaryPoint", None)
-            if secondary_point:
-                names.append(secondary_point["municipality"].lower())
-
-        return names
-
     def create_announcement(self, announcement_data, location):
         title = announcement_data.get("title", "")
         description = announcement_data["location"].get("description", "")
@@ -111,19 +97,7 @@ class Command(BaseCommand):
             "end_time": end_time,
             "location": location,
         }
-
-        announcement = get_or_create(SituationAnnouncement, filter)
-        location_details = announcement_data.get("locationDetails", None)
-        if location_details:
-            announcement.municipalities.clear()
-            municipality_names = self.get_municipality_lower_names(location_details)
-            for name in municipality_names:
-                try:
-                    municipality = Municipality.objects.get(id=name)
-                    announcement.municipalities.add(municipality)
-                except Municipality.DoesNotExist:
-                    logger.warning(f"Municipality {name} does not exists")
-        return announcement
+        return get_or_create(SituationAnnouncement, filter)
 
     def save_features(self, features):
         num_imported = 0
