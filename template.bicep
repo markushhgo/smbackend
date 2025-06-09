@@ -36,36 +36,36 @@ param appInsightsName string
 param dbPostgresExtensions string = 'POSTGIS,HSTORE,PG_TRGM'
 param dbAdminUsername string
 param dbUsername string
-// @secure()
-// param dbAdminPassword string = ''
-// @secure()
-// param dbPassword string = ''
+@secure()
+param dbAdminPassword string = ''
+@secure()
+param dbPassword string = ''
 
 // Application specific parameters
-// @secure()
-// param secretKey string = ''
+@secure()
+param secretKey string = ''
 // @secure()
 // param djangoSuperuserPassword string = ''
 @secure()
 param digitransitApiKey string = ''
 // @secure()
 // param emailHostPassword string = ''
-// @secure()
-// param geoSearchApiKey string = ''
-// @secure()
-// param kuntecKey string = ''
-// @secure()
-// param open311ApiKey string = ''
-// @secure()
-// param open311InternalApiKey string = ''
-// @secure()
-// param open311ServiceCode string = ''
-// @secure()
-// param telraamToken string = ''
-// @secure()
-// param turkuApiKey string = ''
-// @secure()
-// param yitClientSecret string = ''
+@secure()
+param geoSearchApiKey string = ''
+@secure()
+param kuntecKey string = ''
+@secure()
+param open311ApiKey string = ''
+@secure()
+param open311InternalApiKey string = ''
+@secure()
+param open311ServiceCode string = ''
+@secure()
+param telraamToken string = ''
+@secure()
+param turkuApiKey string = ''
+@secure()
+param yitClientSecret string = ''
 
 // Prod
 param uiAppSettings object = {
@@ -74,7 +74,7 @@ param uiAppSettings object = {
   AIR_MONITORING_API: '${apiUrl}/environment_data/api/v1'
   CITIES: 'turku,kaarina,naantali,raisio'
   DIGITRANSIT_API: 'https://api.digitransit.fi/routing/v2/waltti/gtfs/v1'
-  DIGITRANSIT_API_KEY: digitransitApiKey //DIGITRANSIT_API_KEY: 'acd66b698ebf467f981c9c09425f1336'
+  DIGITRANSIT_API_KEY: digitransitApiKey
   EVENTS_API: 'https://linkedevents-api.turku.fi/v1' //ei käytössä?
   FEEDBACK_ADDITIONAL_INFO_LINK: 'https://opaskartta.turku.fi/eFeedback/fi/Home/AboutService'
   FEEDBACK_ADDITIONAL_INFO_LINK_EN: 'https://opaskartta.turku.fi/eFeedback/en/Home/AboutService'
@@ -190,11 +190,11 @@ param apiAppSettings object = {
   ENVIRONMENT_DATA_LOG_LEVEL: 'INFO'
   EXCEPTIONAL_SITUATIONS_LOG_LEVEL: 'INFO'
   FILE_UPLOAD_PERMISSIONS: '0o644'
-  GEO_SEARCH_API_KEY: '5JE4XhDr.1DbW4DywncalrAUWFSS7nnyIUtF70Afe'
+  GEO_SEARCH_API_KEY: geoSearchApiKey
   GEO_SEARCH_LOCATION: 'https://paikkatietohaku.api.hel.fi/v1/address/'
   INTERNAL_IPS: '127.0.0.1'
   IOT_LOG_LEVEL: 'INFO'
-  KUNTEC_KEY: '207e5f4fb4755c0157e2cdba24b8c1c3d598880e'
+  KUNTEC_KEY: kuntecKey
   LAM_COUNTER_API_BASE_URL: 'https://tie.digitraffic.fi/api/tms/v1/history'
   LAM_COUNTER_STATIONS_URL: 'https://tie.digitraffic.fi/api/tms/v1/stations?lastUpdated=false&state=ACTIVE'
   LANGUAGES: 'fi,sv,en'
@@ -204,30 +204,30 @@ param apiAppSettings object = {
   MOBILITY_DATA_GAS_FILLING_STATIONS_URL: 'https://services1.arcgis.com/rhs5fjYxdOG1Et61/ArcGIS/rest/services/ChargingStations/FeatureServer/0/query?f=json&where=1%20%3D%201%20OR%201%20%3D%201&returnGeometry=true&spatialRel=esriSpatialRelIntersects&outFields=LOCATION_ID%2CNAME%2CADDRESS%2CURL%2COBJECTID%2CTYPE'
   MOBILITY_DATA_GEOMETRY_URL: 'https://tie.digitraffic.fi/api/v3/data/traffic-messages/area-geometries?id=11&lastUpdated=false'
   MOBILITY_DATA_LOG_LEVEL: 'INFO'
-  OPEN311_API_KEY: 'LDyhCokW5lQQBfL5tQopDWoepVccSVVD'
-  OPEN311_INTERNAL_API_KEY: 'LDyhCokW5lQQBfL5tQopDWoepVccSVVD'
-  OPEN311_SERVICE_CODE: '46ab5fd8-42e1-e611-a9d4-005056820025'
+  OPEN311_API_KEY: open311ApiKey
+  OPEN311_INTERNAL_API_KEY: open311InternalApiKey
+  OPEN311_SERVICE_CODE: open311ServiceCode
   OPEN311_URL_BASE: 'https://opaskartta.turku.fi/efeedback/api/georeport/6aika/requests.json'
   PTV_ID_OFFSET: '10000000'
   SCM_DO_BUILD_DURING_DEPLOYMENT: '1'
   SEARCH_LOG_LEVEL: 'INFO'
-  SECRET_KEY: 'lXUXjKl-5Eyt685yFRz3bVuGkYPnmonkIOPAA5ThYbgtAUZB'
+  SECRET_KEY: secretKey
   SECURE_PROXY_SSL_HEADER: 'HTTP_X_FORWARDED_PROTO,https'
   SECURE_SSL_REDIRECT: 'False'
   SERVER_EMAIL: 'palvelukartta@turku.fi'
   STATIC_ROOT: '/fileshare/staticroot'
   STATIC_URL: '/static/'
   STREET_MAINTENANCE_LOG_LEVEL: 'INFO'
-  TELRAAM_TOKEN: 'jbJtn7MgDX3BMTw73DTcD5dnE6KKBhOUahTt437e'
+  TELRAAM_TOKEN: telraamToken
   TRAFFIC_COUNTER_OBSERVATIONS_BASE_URL: 'https://data.turku.fi/2yxpk2imqi2mzxpa6e6knq/'
-  TURKU_API_KEY: 'ddd23919b23e7c133b9712b9563fea9486a855da566231f41168b65a7b53dd6f'
+  TURKU_API_KEY: turkuApiKey
   TURKU_SERVICES_IMPORT_LOG_LEVEL: 'INFO'
   TURKU_WFS_URL: 'https://opaskartta.turku.fi/TeklaOGCWeb/WFS.ashx'
   USE_X_FORWARDED_HOST: 'True'
   WEBSITES_ENABLE_APP_SERVICE_STORAGE: 'false'
   WEBSITES_PORT: '8000'
   YIT_CLIENT_ID: '01797d9f-1ab5-4d01-880d-01dfa4925a27'
-  YIT_CLIENT_SECRET: 'mVL8Q~7mcIL0W~7YKRxakBRmLZj6gNyfi-ZTgaDh'
+  YIT_CLIENT_SECRET: yitClientSecret
   YIT_CONTRACTS_URL: 'https://api.autori.io/api/dailymaintenance-a3/contracts/'
   YIT_EVENTS_URL: 'https://api.autori.io/api/dailymaintenance-a3/route/types/operation/'
   YIT_ROUTES_URL: 'https://api.autori.io/api/dailymaintenance-a3/route/'
@@ -645,7 +645,7 @@ var dbProperties = {
   }
   version: '16'
   administratorLogin: dbAdminUsername
-  administratorLoginPassword: 'PgYITtr90ki9TE4d7qvd' //dbAdminPassword
+  administratorLoginPassword: dbAdminPassword
   availabilityZone: '2'
 }
 
@@ -986,7 +986,7 @@ resource keyvault 'Microsoft.KeyVault/vaults@2023-07-01' = {
   resource dbUrlSecret 'secrets' = {
     name: 'dbUrl'
     properties: {
-      value: 'postgis://${dbUsername}:0Z2m5FmhYiMN4OwtOYg5QBt7Qd7NZpa8sLiM51PQHlRDzQnw@${dbServerName}.postgres.database.azure.com/${dbName}'
+      value: 'postgis://${dbUsername}:${dbPassword}@${dbServerName}.postgres.database.azure.com/${dbName}'
     }
   }
 
